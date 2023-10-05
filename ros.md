@@ -1,8 +1,14 @@
 # Note about ROS
+## catkin 
+- `catkin_create_pkg <package name> [dependencies, eg.roscpp rospy std_msgs]`
+- catkin_make / catkin build [packages]
+
 
 ## ROS init & NodeHandle
 - Specific namespace for the node handle by `ros::NodeHandle nh("my_namespace")`, then the node handle will be located at <node_namespace>/my_namespace
 - Private namespace: `ros::NodeHandle priNh('~')`
+- Way to analyse the node handle
+???
 
 ## Launch file
 - node opening, eg.
@@ -29,10 +35,4 @@ It could help with different launch effect based on different situation, eg.
     <node name="false_node" type="false_file" pkg="my_package"/>
     ...
     <group/>
-```
-
-```C
-int a = 1;
-int b = 1;
-int c = 1;
 ```
