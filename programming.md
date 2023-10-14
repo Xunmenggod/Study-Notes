@@ -1,5 +1,6 @@
 # Programming tips
 ## VS Code keyboard shortcuts
+- ctrl+shift+p to open the control command bar
 - Multi-Cursor
     1. alt+mouse left button to choose the location of multi-cursors
     2. ctrl+alt+L to choose all locations with same word
