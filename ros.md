@@ -36,8 +36,21 @@ It could help with different launch effect based on different situation, eg.
     ...
     <group/>
 ```
+## Gazebo
+- roslaunch with gazebo
+```xml
+<!--include the launch file for empty.world-->
+<include file="$(find gazebo_ros)/launch/empty_world.launch"/>
+<!--spawn model-->
+<node name="<prefered_name>" pkg="gazebo_ros" type="spawn_model">
+    <args="-m model (-urdf | -sdf) (-param -file: how to load model xml description) -x -y -z -R -P -Y">
+</node>
+```
+
 ## ROS Control
 
 
 ## Export Ros Plugin Lib
+
+
 
