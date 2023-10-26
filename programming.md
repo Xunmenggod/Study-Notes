@@ -32,3 +32,22 @@
 - const lvalue reference accptes an rvalue eg. `const int& a = 3;`
 - rvalue reference is an **alias** of a temporary object/value, eg. T&& <variable> = <temporary object>
 - rvalue ref must be initialized with temporary object
+
+## Program tricks (format & multiple nested loop avoidance)
+- return the function in advance for reversed if logic and assert() function
+```C++
+#include <iostream>
+#include <assert.h>
+
+#defin ifDebug 1
+int main()
+{
+    // read the file
+    File* fp = fopen("nonExistedFile", 'r');
+    // debug mode check whether the readed file existed or not,
+    // if no, assert() will terminate the program and report the location of failed assertion
+    if (isDebug)
+        assert(fp);
+}
+```
+ 
