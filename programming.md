@@ -50,4 +50,60 @@ int main()
         assert(fp);
 }
 ```
+
+## `inline` & `template`
+- inline should be added before the function definition instead of declartion
+- member function definition inside the class body is regraded as inline function by default
+- inline function definition is suggested to put in the header file instead of cpp file
+- expression of using template for genetic programming
+```C++
+template <typename T>
+// some functions has type T for parameters or return type,
+// some class contains the type T member variables or functions
+```
+- template function or class member function definition should be defined in the header file
  
+
+## CMAKE
+- Basic commands:
+Find all required packges of the c++ project
+find_packages(...)
+
+set(<variable name> <assignment value>)
+
+Include diretories to let the compiler to find the required header files during building
+include_directories(<...>)
+
+Link directories to let the linker to find the required header file during linking
+link_directories(<...>)
+
+Declare a C++ library
+add_library()
+
+Declare a executable file with source files
+add_executable(<executable file name> <source cpp files>)
+
+Link the libraries
+target_link_libraries(<executable file name> <library names>)
+
+Set the compile options
+target_compile_options(<executable file name> [PRIVATE|PUBLIC|INTERFACE] <option> ...)
+
+Install the packages or libraies to designated destination directory
+install(TARGETs <target name>
+ARCHIVE DESTINATION <destination direction names>
+LIBRARY DESTINATION <destination direction names>
+RUNTIME DESTINATION <destination direction names>
+)
+
+This command helps to run commands in the terminal beforehand
+execute_process(
+    COMMAND <terminal commands>
+    WORKING_DIRECCTORY <Directory name>
+)
+
+if(<boolean expression>)
+    <some operations>
+endif()
+
+## Docker
