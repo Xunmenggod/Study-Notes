@@ -107,3 +107,19 @@ if(<boolean expression>)
 endif()
 
 ## Docker
+
+
+
+## Git
+### Submodule
+```C++
+Add the submodule to the current project
+git submodule add <Remote Repo(http/ssh)>
+Commit the submodule to the remote repo of the current project
+git commit -m "add submodule xxx"
+```
+- The whole project could be cloned to local by using `git clone --recurse--submodules <repo url>` or we could directly clone the project and run `git submodule init` and `git submodule update`
+
+- If submodule repo is updated to a new version, we need to cd to the submodule and run `git pull origin main`. If you have multiple submodules, you could utilize the command of git submodule foreach. To update all submodules, the command `git submodule foreach 'git pull origin master'`.
+
+- To remove a submodule, we could run `git submodule deinit <submodule project name>` and `git rm <submodule project name>`
