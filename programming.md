@@ -30,7 +30,7 @@
 ## lvalues & rvalues
 - Temporary object is considered as an **rvalue**, it can't be modified so that it could be hold by a const reference, eg.`int& a = 3; // error`
 - const lvalue reference accptes an rvalue eg. `const int& a = 3;`
-- rvalue reference is an **alias** of a temporary object/value, eg. T&& <variable> = <temporary object>
+- rvalue reference is an **alias** of a temporary object/value, eg. `T&& <variable> = <temporary object>`
 - rvalue ref must be initialized with temporary object
 
 ## Program tricks (format & multiple nested loop avoidance)
@@ -118,8 +118,28 @@ git submodule add <Remote Repo(http/ssh)>
 Commit the submodule to the remote repo of the current project
 git commit -m "add submodule xxx"
 ```
-- The whole project could be cloned to local by using `git clone --recurse--submodules <repo url>` or we could directly clone the project and run `git submodule init` and `git submodule update`
+- The whole project could be cloned to local by using `git clone --recursive <repo url>` or we could directly clone the project and run `git submodule init` and `git submodule update`
 
 - If submodule repo is updated to a new version, we need to cd to the submodule and run `git pull origin main`. If you have multiple submodules, you could utilize the command of git submodule foreach. To update all submodules, the command `git submodule foreach 'git pull origin master'`.
 
 - To remove a submodule, we could run `git submodule deinit <submodule project name>` and `git rm <submodule project name>`
+
+## GNUPLOT (Scientific Plot)
+- ; could be used to seperate different commands in same line
+- \ could extend over several input lines by ending each line
+- basic commands
+```bash
+set xrange [<low>:<high>]
+set title '<title name>'
+set xlable '<lable name>'
+set ylabel '<lable name>'
+# w stands for with and l for lines, lt for linetype
+plot '<data file name>' using <col_num for x>:<col_num for y> w l t '<line title name>'
+set datafile seperator # or comma (for csv files)
+set key left top # put the legend related stuff to the left top corner
+splot is for 3D graph plotting
+# save output
+set terminal png # or other formats
+set output '<file name>.png'
+```
+- write a gnuplot script with .gp and run it by `gnuplot <file name>.gp`
