@@ -124,6 +124,12 @@ git commit -m "add submodule xxx"
 
 - To remove a submodule, we could run `git submodule deinit <submodule project name>` and `git rm <submodule project name>`
 
+### Branches 
+- `git branch -vv` serach for the connection between local and remote branches
+- `git branch -a` show all the local and remote branches
+- `git checkout -b <branch name>` create and switch to the branch
+- `git push -u origin <branch name>` push the local branch to the remote and build connection
+
 ## GNUPLOT (Scientific Plot)
 - ; could be used to seperate different commands in same line
 - \ could extend over several input lines by ending each line
