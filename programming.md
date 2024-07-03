@@ -60,6 +60,22 @@ int main()
 template <typename T>
 // some functions has type T for parameters or return type,
 // some class contains the type T member variables or functions
+class A
+{
+    private:
+        T val;
+    public:
+        A()
+        {
+            cout<<"constructor"<<endl;
+        }
+        void print();
+}
+template <typename T>
+void A<T>::print()
+{
+    // function definition
+}
 ```
 - template function or class member function definition should be defined in the header file
  
