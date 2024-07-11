@@ -33,6 +33,27 @@
 - rvalue reference is an **alias** of a temporary object/value, eg. `T&& <variable> = <temporary object>`
 - rvalue ref must be initialized with temporary object
 
+## Class
+- copy construction and copy assignment
+```C++
+// assuming A is a class with parameter construction
+A a(1);
+A b(2);
+A c = a; // copy construction
+c = b; // copy assignment
+// initialization 
+int a = 1 or int a(1) // they are equal for construction
+// assignment 
+a = 100 // this is same with the functionality as copy assignment
+```
+- compiler default generating construction and assignment function rule:
+    1. 
+    2. 
+    3.     
+    4.        
+
+
+
 ## Program tricks (format & multiple nested loop avoidance)
 - return the function in advance for reversed if logic and assert() function
 ```C++
@@ -123,7 +144,25 @@ if(<boolean expression>)
 endif()
 
 ## Docker
+### Basic concept: images and container which are class and running instances respectively
+### Dockerfile: the file contains all the dependencies and shell command to run the software. The following content shows a example of Dockerfile
+```docker
+FROM ros:noetic #<base-images>
+COPY src_scripts.py des_scripts.py # COPY <src file path relative to the location of Dockerfile> <dest file>
+CMD python ./scripts.py
+```
 
+### Frequent used docker command
+```bash
+docker run <contanier-name>
+docker build -t <docker image name> <Docker file directory>
+docker push/pull # push and pull the docker image from docker hub
+docker images # show the existing docker images 
+docker kill <running-container-name> # kill running contanier
+docker rm <container-name> # rm one or more container 
+docker restart <container-name>
+docker ps # list all the containers
+```
 
 
 ## Git
@@ -145,6 +184,15 @@ git commit -m "add submodule xxx"
 - `git branch -a` show all the local and remote branches
 - `git checkout -b <branch name>` create and switch to the branch
 - `git push -u origin <branch name>` push the local branch to the remote and build connection
+
+### Sync between remote and local
+1. add and commit the local changes to the local repo
+2. git push to the remoet repo
+3. if error, stash the commit to the stack by `git stash`
+4. git pull
+5. handle the conflict to merge 
+6. run `git stash pop` to get the modified content and handle the conflict
+
 
 ## GNUPLOT (Scientific Plot)
 - ; could be used to seperate different commands in same line

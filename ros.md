@@ -36,6 +36,14 @@ It could help with different launch effect based on different situation, eg.
     ...
     <group/>
 ```
+## xacro and urdf
+- link center are all located at the centorid for primitive shape such as sphere, box, and cylinder
+- To convert xacro file to urdf, we could run `rosrun xacro xacro xxx.xacro > xxx.urdf
+- We could add a line to launch file for automatic conversion
+```xml
+    <param name="robot_description" command="$(find xacro)/xacro $(find <pkg-name>)/<xacro file relatibe path to the pkg directory>"/>
+```
+- **Notice**: The new link center is located at the position of the joint configuration, if want offset of the center, could use the link origin element for offset
 ## Gazebo
 - roslaunch with gazebo
 ```xml
