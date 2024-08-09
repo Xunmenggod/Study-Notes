@@ -102,11 +102,23 @@ void A<T>::print()
  
 
 ## CMAKE
+- Basic knowlege about the package construction: static(静态库 .a/.lib), dynamic(动态库 .so/.ddl)
+- - Linking to static lib is done during building while the dynamic lib is inerted during running stage
+- - source file(including .h .c .cpp) are pre-processed for #define, inline based on the compiler optimization. And then we build it to become object file (.o), then we could use other software to pack those object file to static or dynamic lib 
+- - example
+```shell
+gcc -c -fpic test1.c test2.c
+gcc -shared test1.o test2.o  -o libtest.so
+```
+- - 在使用动态库时需要提供相应的头文件以令使用者可以知道那些函数可以调用，所以动态库就相当与头文件中声明的函数的实现，并保证其内容不被看到。
+
 - Basic commands:
 Find all required packges of the c++ project
 find_packages(...)
 
 set(<variable name> <assignment value>)
+- 动态库输出位置设定参数： CMAKE_LIBRARY_OUTPUT_DIRECTORY
+- 动态库输出位置设定参数： CMAKE_ARCHIVE_OUTPUT_DIRECTORY
 
 Include diretories to let the compiler to find the required header files during building
 include_directories(<...>)

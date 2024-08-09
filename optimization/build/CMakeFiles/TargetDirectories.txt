@@ -1,0 +1,3 @@
+/home/xm-laptop/Code/Study-Notes/optimization/build/CMakeFiles/test.dir
+/home/xm-laptop/Code/Study-Notes/optimization/build/CMakeFiles/edit_cache.dir
+/home/xm-laptop/Code/Study-Notes/optimization/build/CMakeFiles/rebuild_cache.dir
