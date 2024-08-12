@@ -2,3 +2,4 @@ play
 /scripts*
 .vscode
 C++Project/build
+optimization/build
