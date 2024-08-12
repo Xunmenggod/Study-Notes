@@ -1,1 +1,0 @@
-/usr/bin/g++-9 -rdynamic CMakeFiles/hello.dir/src/hello.cpp.o -o hello 

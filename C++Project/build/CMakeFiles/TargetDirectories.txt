@@ -1,3 +1,0 @@
-/home/xm-laptop/Code/Study-Notes/C++Project/build/CMakeFiles/hello.dir
-/home/xm-laptop/Code/Study-Notes/C++Project/build/CMakeFiles/edit_cache.dir
-/home/xm-laptop/Code/Study-Notes/C++Project/build/CMakeFiles/rebuild_cache.dir

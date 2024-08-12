@@ -1,3 +1,4 @@
 play
 /scripts*
 .vscode
+C++Project/build
