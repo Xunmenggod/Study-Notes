@@ -99,7 +99,50 @@ void A<T>::print()
 }
 ```
 - template function or class member function definition should be defined in the header file
+
+## std11 atomic operation
+- To use that, we need to add '#include <atomic>'
+- Atomic type data type ensures taht there is only one thread could access that shared resource and the access sequence is correct which means it will not lead to deadlock
+- Atomic could help avoid using the mutex or other lock to increase the efficiency
+- Atomic flag usage example
+```C++
+#include <iostream>      
+#include <atomic>        
+#include <thread>         
+#include <vector>          
+#include <sstream>   
+
+// atomic_flag works like a spin lock
+std::atomic_flag lock = ATOMIC_FLAG_INIT; // if there is not initialization, the status for atomic_flag is unspecified; Now is clear status
+
+std::stringstream stream;
  
+void append_number(int x) {
+    // test and set -> wait for obtain lock access an lock
+    while (lock_stream.test_and_set()) {}
+    stream << "thread #" << x << '\n';
+    // unlock operation
+    lock_stream.clear();
+}
+ 
+int main ()
+{
+    std::vector<std::thread> threads;
+    for (int i=1; i<=10; ++i)
+    {
+        threads.push_back(std::thread(append_number,i));
+    }
+    
+    for (auto& th : threads)
+    {
+        th.join();
+    }
+    
+    std::cout << stream.str();
+    return 0;
+}
+```
+- Atomic data type including int, char, bool. double and float does not have the operator like '+='
 
 ## CMAKE
 - Basic knowlege about the package construction: static(静态库 .a/.lib), dynamic(动态库 .so/.ddl)
