@@ -26,6 +26,77 @@
 
 - **weak pointer**:
     
+## Algorithm for data structure of STL
+- **Vector**
+    1. construction:
+        ```C++
+            #include <vector>
+            // empty int vector
+            Vector<int> vec; 
+            Vector<int> a{1,2,3,4,5}; // Vector<int> a = {1,2,3,4,6};
+            Vector<int> zeros(6);
+            // int vector contains six 5
+            Vector<int> fives(6, 5);
+            // part contains {3,4,5}
+            Vector<int> part(a.begin()+2, a.end()-1);
+        ```
+    2. basic operation
+        ```C++
+            vector<int> vec(7,4);
+            // indexing
+            cout<<vec[2]<<endl;
+            // traverse
+            vector::iterator it;
+            for (it = vec.begin(); it!=vec.end(); it++)
+                cout<<*it<<endl;
+            // insert: At index3 insert 8 into the vec
+            vec.insert(3, 8);
+            vec.erase(3);
+            // erase the element in index [begin, end)
+            vec.erase(begin, end);
+            vec.size();
+            vec.clear();
+            int first = vec.front();
+            int back = vec.pop_back();
+            vec.push_back(2);
+            vec.resize(new_size);
+            bool isEmpty = vec.empty();
+        ```
+     3. algorithm:
+         ```C++
+             #include <algorithm>
+             reverse(vec.begin(), vec.end());
+             sort(vec.begin, vec.end());;
+             fill(vec.begin(), vec.end(), val);
+             fill_n(vec.begin(), 10, val); // fill ten numbers in the vec from the begining to be val
+             // unique will first remove all repetitive elements to the end of the vector
+             // and return the first repetitive element index by iterator
+             vector<int>::iterator it = unique(vec.begin(), vec.end());
+             // using unique to delete all the repetitive elements
+             sort(vec.begin(), vec.end());
+             vector<int>::iterator it = unique(vec.begin(), vec.end());
+             vec.erase(it, vec.end());
+         ```
+- **set**
+    1. basic operation and commonly used function, set is used to store unique element
+        ```C++
+            #include<set>
+            set<char> charSet;
+            charSet.empty();
+            charSet.size();
+            charSet.clear();
+            charSet.erase(element);
+            charSet.insert(element);
+            // check whether the element is inside the set
+            bool ret = charSet.count(element);
+            // find the element position in the set and return the position iterator
+            set<type>::iterator it = charSet.find(element);
+        ```
+- **Map**
+    1.
+        ```C++
+            
+        ```
 
 ## lvalues & rvalues
 - Temporary object is considered as an **rvalue**, it can't be modified so that it could be hold by a const reference, eg.`int& a = 3; // error`
@@ -197,6 +268,57 @@ execute_process(
 if(<boolean expression>)
     <some operations>
 endif()
+
+## Eigen C++
+```C++
+// matrix and vector
+Matrixxf a(10,15); // 10x15 matrix
+VectorXf(4); // 4X1 vector
+// fixed size
+Matrix3f a{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+Matrix3f a; // 3x3 matrix
+Vector3f b;
+
+// matrix indexing
+a_3_2 = a(2,1); // indexing with (row, col) 
+b_3 = b[2] = b(2,1); // vector support [], becuz `[]` do not support multi parameter
+
+// Matrix quick assignment
+a << 1,2,3,
+     4,5,6,
+     7,8,9;
+
+// matrix resize
+a.resize(5,5);
+
+// special matrix
+a = MatrixXf::Zero(5,5) = a.setZero(); 
+a = MatrixXf::Identity(5,5) = a.setIdentity();
+a = MatrixXf::Random(5,5) = a.setRandom();
+
+// block operation
+a.block<2,2>(0,0) = a.block(0,0,2,2); // Starting from 0,0 index, 2x2 sub matrix
+row_0 = a.row(0); // entire first row
+col_0 = a.col(0); // entire first column
+a.topLeftCorner(1,2); // top left 1x2 sub matrix
+a.topRightCorner(1,2);
+a.BottomLeftCorner(1,2);
+a.BottomRightCorner(1,2);
+a.topRows(2);
+a.middleRows(2);
+a.middleCols(2);
+
+// vec segmention
+b.segment(1,2); // Starting from index 1, size 2x1 sub vector
+
+// math operation
+a.transpose();
+a.dot(b);
+// cross operations only support 3x3 matrix
+a.cross(b);
+a *= 2 == (a = a*2);
+// a * b is matrix calculation
+```
 
 ## Docker
 ### Basic concept: images and container which are class and running instances respectively

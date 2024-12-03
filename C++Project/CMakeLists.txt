@@ -8,5 +8,5 @@ INCLUDE_DIRECTORIES(
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/src SOURCE_LISTS)
 
-add_executable(hello ${SOURCE_LISTS})
-
+# add_executable(hello ${SOURCE_LISTS})
+add_executable(time ${PROJECT_SOURCE_DIR}/src/time.cpp)

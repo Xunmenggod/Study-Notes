@@ -1,0 +1,13 @@
+Language:  Cpp
+BasedOnStyle: Google
+IndentWidth: 4
+UseTab: false
+BreakBeforeBraces: Allman
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false 
+ColumnLimit: 100
+SpacesBeforeTrailingComments: 1
+IndentCaseLabels: true
+PointerBindsToType: true
+AlignOperands: false
+AllowShortFunctionsOnASingleLine: InlineOnly

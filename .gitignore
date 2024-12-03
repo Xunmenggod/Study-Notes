@@ -5,3 +5,5 @@ C++Project/build
 optimization/build
 Fruit/
 nn_mpc/ml-casadi/
+DLO_following/
+__pycache__

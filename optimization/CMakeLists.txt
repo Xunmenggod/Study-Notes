@@ -15,11 +15,14 @@ endif()
 
 # include_directories()
 
+LINK_LIBRARIES(m)
+
 add_executable(test
-    test.cpp
+    NLP.cpp
 )
 
 target_link_libraries(test
     PUBLIC
-    OsqpEigen::OsqpEigen    
+    OsqpEigen::OsqpEigen
+    m
 )
