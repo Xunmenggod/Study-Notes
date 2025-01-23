@@ -18,7 +18,7 @@ endif()
 LINK_LIBRARIES(m)
 
 add_executable(test
-    NLP.cpp
+    test.cpp
 )
 
 target_link_libraries(test

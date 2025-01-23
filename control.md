@@ -2,7 +2,7 @@
 
 ## Basics (math)
 ### Orientation
-- Quternion representation (w, x, y, z), conjugate operation -q = (w, -x, -y, -z), quaternion product可以表示两个旋转的叠加， quaternion inverse $q^{-1} = \frac{q^*}{|q|}=q^* $(if it is a unit quaternion); Quternion error $= q1*q2^*$; Qunternion error to angular velocity error: 
+- Quternion representation (w, x, y, z), conjugate operation -q = (w, -x, -y, -z), quaternion product可以表示两个旋转的叠加， quaternion inverse $q^{-1} = \frac{q^*}{|q|}=q^*$(if it is a unit quaternion); Quternion error $= q1*q2^*$; Qunternion error to angular velocity error: 
   1. convert quaternion error to axis angle: angle = 2 * arccos(abs(w)), axis = (x,y,z) / sin(angle)
   2. calculate the angular displacement: dw = axis * angle
   3. differentiate to get the  velocity_error = dw / dt
@@ -11,6 +11,12 @@
 - $T^{-1} = [R^T, -R^Tb; 0, 1]$
 - To rotate a point in b to s frame by $p_s = T_{sb}p_b$
 - T_sb has the rotation matrix from s to b, has the trans vector that is the origin of b in s frame
+
+### Transformation for Twist & Wrench
+- $Ad_T = [R 0; \hat{p}R, R]$
+- $\hat{p}$ is skew-symmerty matrix of the vector p, $\hat{p} = [0, -z, y; z, 0, -x; -y, x, 0]$
+- $V_a = Ad_{T_{ab}}V_b$
+- $F_a = [Ad_{T_{ba}}]^TF_b$
 
 ### Jacobian
 - Given a velocity jacobian in a specified frame A, how could we transfer the jacobian in a different frame B

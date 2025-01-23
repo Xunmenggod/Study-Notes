@@ -50,7 +50,7 @@ bool constructConstraints(SparseMatrix<double> &Ac, VectorXd &lb, VectorXd &ub, 
     MatrixXd A = MatrixXd::Zero(18, 18);
     A.block<6, 6>(0, 6) = MatrixXd::Identity(6, 6);
     A.block<6, 6>(6, 12) = MatrixXd::Identity(6, 6);
-    A = (A+MatrixXd::Identity(18,18)) * delta_t;
+    A = (A + MatrixXd::Identity(18, 18)) * delta_t;
     MatrixXd B = MatrixXd::Zero(18, 6);
     B.block<6, 6>(12, 0) = MatrixXd::Identity(6, 6);
     B = B * delta_t;
@@ -108,6 +108,10 @@ bool constructConstraints(SparseMatrix<double> &Ac, VectorXd &lb, VectorXd &ub, 
 
 int main()
 {
+    // Matrix4d a;
+    // a << 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4;
+    // Matrix4d b = a.cwiseSqrt();
+    // cout << a << endl << b << endl;
     // '''  End effector trajectory optimization x_o, state_x_k, u_k = J = argmin(
     //     1 / tf + In(-a ^ 2 + j ^ 2)) s.t.dot_[x, x_dot, x_ddot] =
     //     [ 0, 1, 0; 0, 0, 1; 0, 0, 0 ][x, x_dot, x_ddot] + [ 0, 0, 1 ][x + dddot] x_dot = x_ddot =
@@ -189,11 +193,11 @@ int main()
         exit(0);
     }
     VectorXd solution;
-    if (solver.solveProblem() != OsqpEigen::ErrorExitFlag::NoError)
-    {
-        cout << "Failed to solve problem!!!" << endl;
-        exit(0);
-    }
+    // if (solver.solveProblem() != OsqpEigen::ErrorExitFlag::NoError)
+    // {
+    //     cout << "Failed to solve problem!!!" << endl;
+    //     exit(0);
+    // }
     solution = solver.getSolution();
 
     // parse solution and plotting for visualization

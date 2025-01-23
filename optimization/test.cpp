@@ -3,7 +3,6 @@
 
 // eigen
 #include <Eigen/Dense>
-
 #include <iostream>
 
 void setDynamicsMatrices(Eigen::Matrix<double, 12, 12>& a, Eigen::Matrix<double, 12, 4>& b)
@@ -23,8 +22,7 @@ void setDynamicsMatrices(Eigen::Matrix<double, 12, 12>& a, Eigen::Matrix<double,
 }
 
 void setInequalityConstraints(Eigen::Matrix<double, 12, 1>& xMax,
-                              Eigen::Matrix<double, 12, 1>& xMin,
-                              Eigen::Matrix<double, 4, 1>& uMax,
+                              Eigen::Matrix<double, 12, 1>& xMin, Eigen::Matrix<double, 4, 1>& uMax,
                               Eigen::Matrix<double, 4, 1>& uMin)
 {
     double u0 = 10.5916;
@@ -51,11 +49,9 @@ void setWeightMatrices(Eigen::DiagonalMatrix<double, 12>& Q, Eigen::DiagonalMatr
 }
 
 void castMPCToQPHessian(const Eigen::DiagonalMatrix<double, 12>& Q,
-                        const Eigen::DiagonalMatrix<double, 4>& R,
-                        int mpcWindow,
+                        const Eigen::DiagonalMatrix<double, 4>& R, int mpcWindow,
                         Eigen::SparseMatrix<double>& hessianMatrix)
 {
-
     hessianMatrix.resize(12 * (mpcWindow + 1) + 4 * mpcWindow,
                          12 * (mpcWindow + 1) + 4 * mpcWindow);
 
@@ -68,7 +64,8 @@ void castMPCToQPHessian(const Eigen::DiagonalMatrix<double, 12>& Q,
             float value = Q.diagonal()[posQ];
             if (value != 0)
                 hessianMatrix.insert(i, i) = value;
-        } else
+        }
+        else
         {
             int posR = i % 4;
             float value = R.diagonal()[posR];
@@ -79,11 +76,9 @@ void castMPCToQPHessian(const Eigen::DiagonalMatrix<double, 12>& Q,
 }
 
 void castMPCToQPGradient(const Eigen::DiagonalMatrix<double, 12>& Q,
-                         const Eigen::Matrix<double, 12, 1>& xRef,
-                         int mpcWindow,
+                         const Eigen::Matrix<double, 12, 1>& xRef, int mpcWindow,
                          Eigen::VectorXd& gradient)
 {
-
     Eigen::Matrix<double, 12, 1> Qx_ref;
     Qx_ref = Q * (-xRef);
 
@@ -98,8 +93,7 @@ void castMPCToQPGradient(const Eigen::DiagonalMatrix<double, 12>& Q,
 }
 
 void castMPCToQPConstraintMatrix(const Eigen::Matrix<double, 12, 12>& dynamicMatrix,
-                                 const Eigen::Matrix<double, 12, 4>& controlMatrix,
-                                 int mpcWindow,
+                                 const Eigen::Matrix<double, 12, 4>& controlMatrix, int mpcWindow,
                                  Eigen::SparseMatrix<double>& constraintMatrix)
 {
     constraintMatrix.resize(12 * (mpcWindow + 1) + 12 * (mpcWindow + 1) + 4 * mpcWindow,
@@ -129,8 +123,8 @@ void castMPCToQPConstraintMatrix(const Eigen::Matrix<double, 12, 12>& dynamicMat
                 float value = controlMatrix(j, k);
                 if (value != 0)
                 {
-                    constraintMatrix.insert(12 * (i + 1) + j, 4 * i + k + 12 * (mpcWindow + 1))
-                        = value;
+                    constraintMatrix.insert(12 * (i + 1) + j, 4 * i + k + 12 * (mpcWindow + 1)) =
+                        value;
                 }
             }
 
@@ -144,16 +138,14 @@ void castMPCToQPConstraintVectors(const Eigen::Matrix<double, 12, 1>& xMax,
                                   const Eigen::Matrix<double, 12, 1>& xMin,
                                   const Eigen::Matrix<double, 4, 1>& uMax,
                                   const Eigen::Matrix<double, 4, 1>& uMin,
-                                  const Eigen::Matrix<double, 12, 1>& x0,
-                                  int mpcWindow,
-                                  Eigen::VectorXd& lowerBound,
-                                  Eigen::VectorXd& upperBound)
+                                  const Eigen::Matrix<double, 12, 1>& x0, int mpcWindow,
+                                  Eigen::VectorXd& lowerBound, Eigen::VectorXd& upperBound)
 {
     // evaluate the lower and the upper inequality vectors
-    Eigen::VectorXd lowerInequality
-        = Eigen::MatrixXd::Zero(12 * (mpcWindow + 1) + 4 * mpcWindow, 1);
-    Eigen::VectorXd upperInequality
-        = Eigen::MatrixXd::Zero(12 * (mpcWindow + 1) + 4 * mpcWindow, 1);
+    Eigen::VectorXd lowerInequality =
+        Eigen::MatrixXd::Zero(12 * (mpcWindow + 1) + 4 * mpcWindow, 1);
+    Eigen::VectorXd upperInequality =
+        Eigen::MatrixXd::Zero(12 * (mpcWindow + 1) + 4 * mpcWindow, 1);
     for (int i = 0; i < mpcWindow + 1; i++)
     {
         lowerInequality.block(12 * i, 0, 12, 1) = xMin;
@@ -180,14 +172,13 @@ void castMPCToQPConstraintVectors(const Eigen::Matrix<double, 12, 1>& xMax,
     upperBound << upperEquality, upperInequality;
 }
 
-void updateConstraintVectors(const Eigen::Matrix<double, 12, 1>& x0,
-                             Eigen::VectorXd& lowerBound,
+void updateConstraintVectors(const Eigen::Matrix<double, 12, 1>& x0, Eigen::VectorXd& lowerBound,
                              Eigen::VectorXd& upperBound)
 {
     lowerBound.block(0, 0, 12, 1) = -x0;
     upperBound.block(0, 0, 12, 1) = -x0;
 }
-`
+
 double getErrorNorm(const Eigen::Matrix<double, 12, 1>& x, const Eigen::Matrix<double, 12, 1>& xRef)
 {
     // evaluate the error
@@ -276,7 +267,6 @@ int main()
 
     for (int i = 0; i < numberOfSteps; i++)
     {
-
         // solve the QP problem
         if (solver.solveProblem() != OsqpEigen::ErrorExitFlag::NoError)
             return 1;
@@ -290,9 +280,14 @@ int main()
 
         // propagate the model
         x0 = a * x0 + b * ctr;
+        std::cout << "state2: " << x0[2] << std::endl;
+        double errNorm = getErrorNorm(x0, xRef);
+        std::cout << "err norm: " << errNorm << std::endl;
 
         // update the constraint bound
         updateConstraintVectors(x0, lowerBound, upperBound);
+        solver.updateHessianMatrix(hessian);
+        solver.updateGradient(gradient);
         if (!solver.updateBounds(lowerBound, upperBound))
             return 1;
     }

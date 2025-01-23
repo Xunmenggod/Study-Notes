@@ -2,6 +2,8 @@ import mujoco
 import mujoco.viewer
 import numpy as np
 import time
+import osqp
+from scipy import sparse
 
 # Cartesian impedance control gains.
 impedance_pos = np.asarray([100.0, 100.0, 100.0])  # [N/m]
@@ -86,6 +88,10 @@ def main() -> None:
     Mx = np.zeros((6, 6))
 
     print(f'model nq nv nu {model.nq, model.nv, model.nu}')
+    
+    solver = osqp.OSQP()
+    is_first = True
+    selection_mat = [1,0,0,0,0,0,0]
 
     with mujoco.viewer.launch_passive(
         model=model,
@@ -111,10 +117,26 @@ def main() -> None:
             mujoco.mju_negQuat(site_quat_conj, site_quat)
             mujoco.mju_mulQuat(error_quat, data.mocap_quat[mocap_id], site_quat_conj)
             mujoco.mju_quat2Vel(twist[3:], error_quat, 1.0)
+            ori_err = twist[3:]
             twist[3:] *= Kori / integration_dt
-
+            pose_err = np.ones(6)
+            pose_err[:3] = dx
+            pose_err[3:] = ori_err
+            twistErr = np.ones((6,1))
+            # @TODO: sit type int
+            mujoco.mj_objectVelocity(model, data,
+                       7, site_id, twistErr, 1)
+            stiffness_gain = np.eye(6)
+            damping_gain = np.eye(6)
+            gains = [300,300,300,20,20,20]
+            for i in range(6):
+                stiffness_gain[i,i] = gains[i]
+            
             # Jacobian.
             mujoco.mj_jacSite(model, data, jac[:3], jac[3:], site_id)
+            jac_dot = np.zeros((6,7))
+            mujoco.mj_jacDot(model, data, jac_dot[:3], jac_dot[3:],
+               np.array([0,0,0]), mujoco.mj_name2id(model, data, mujoco.mjtObj.mjOBJ_BODY, "attachment"))
 
             # Compute the task-space inertia matrix.
             mujoco.mj_solveM(model, data, M_inv, np.eye(model.nv))
@@ -124,21 +146,74 @@ def main() -> None:
                 Mx = np.linalg.inv(Mx_inv)
             else:
                 Mx = np.linalg.pinv(Mx_inv, rcond=1e-2)
+            
+            # np.linalg.s
+            Mx_sqrt = np.linalg.svd(Mx, compute_uv=0)
+            print(f'svd Mx: \n{Mx_sqrt}')
+            Mx_sqrt = np.sqrt(Mx_sqrt)
+            close_loop_gain = Mx_sqrt @ np.sqrt(stiffness_gain) +  np.sqrt(stiffness_gain) @ Mx_sqrt
+            print(f"mx: \n {Mx}cl damping:\n {close_loop_gain}")
+            for i in range(6):
+                damping_gain[i,i] = close_loop_gain[i]
+            cur_q  = data.qpos[dof_ids]
+            cur_dq = data.qvel[dof_ids]
+            hessian = jac.transpose()@jac
+            hessian = sparse.csc_matrix(hessian)
+            jdot_qdot = 1
+            gradient = jac.transpose() @ (jdot_qdot - Mx_inv@(stiffness_gain @ pose_err + damping_gain @ twistErr))
+            
+            acc = stiffness_gain @ pose_err + damping_gain @ twistErr
+            des_ddq = np.linalg.pinv(jac) * (acc - jac_dot @ cur_dq)
+            
+            
+            dof = 7
+            qMin = -3.14*np.ones(7)
+            qMax = 3.14*np.ones(7)
+            dqMin = -9 * np.ones(7)
+            dqMax = 9 * np.ones(7)
+            tauMin = -20 * np.ones(7)
+            tauMax = 20 * np.ones(7)
+            Idof = np.eye(dof)
+            accMat = (1 / 2) * dt * dt * Idof
+            velMat = dt * Idof
+            Ac = np.zeros((3*dof, dof))
+            Ac[:dof] = accMat
+            Ac[dof:2*dof] = velMat
+            Ac[2*dof:] = np.linalg.pinv(M_inv)
+            Ac = sparse.csc_matrix(Ac)
+            # // update lb & ub
+            lb = np.ones(3*7)
+            lb[0:dof] = qMin - dt * cur_dq - cur_q
+            lb[dof:dof+dof] = dqMin - cur_dq
+            lb[2 * dof: 2 * dof + dof] = tauMin - data.qfrc_bias[dof_ids]
+            ub = np.ones(3*7)
+            ub[0:dof] = qMax - dt * cur_dq - cur_q
+            ub[dof:dof+dof] = dqMax - cur_dq
+            ub[2 * dof: 2 * dof + dof] = tauMax - data.qfrc_bias[dof_ids]
+            if is_first:
+                solver.setup(hessian, gradient, Ac, lb, ub)
+                is_first = False
+            else:
+                solver.update(gradient,lb, ub, Px=hessian, Ax=Ac)
+                
+            solution = solver.solve()
+            solution = solution.x
+            print(f'soplution: {solution}')
+            # tau = np.linalg.pinv(M_inv) @ solution
+            tau = np.linalg.pinv(M_inv) @ des_ddq
 
-            # Compute generalized forces. F_ctrl = Mx* (pose err)
-            # Kd = 2*sqrt(Kp)
-            tau = jac.T @ Mx @ (Kp * twist - Kd * (jac @ data.qvel[dof_ids]))
+            # Compute generalized forces.
+            # tau = jac.T @ Mx @ (Kp * twist - Kd * (jac @ data.qvel[dof_ids]))
 
             # Add joint task in nullspace, keep the key joint position
-            Jbar = M_inv @ jac.T @ Mx
-            ddq = Kp_null * (q0 - data.qpos[dof_ids]) - Kd_null * data.qvel[dof_ids]
-            # nullspace matrix = I - J^TM^-1J^T(JM^-1J^T)^-1
-            tau += np.linalg.pinv(M_inv)@(np.eye(model.nv) - jac.T @ Jbar.T) @ ddq
-            # tau += (np.eye(model.nv) - jac.T@np.linalg.pinv(jac.T)) @ ddq 
+            # Jbar = M_inv @ jac.T @ Mx
+            # ddq = Kp_null * (q0 - data.qpos[dof_ids]) - Kd_null * data.qvel[dof_ids]
+            # tau += (np.eye(model.nv) - jac.T @ Jbar.T) @ ddq
 
             # Add gravity compensation.
             if gravity_compensation:
                 tau += data.qfrc_bias[dof_ids]
+                print(f'tau: {tau[0]}')
 
             # Set the control signal and step the simulation.
             np.clip(tau, *model.actuator_ctrlrange.T, out=tau)
