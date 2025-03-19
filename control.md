@@ -7,6 +7,29 @@
   2. calculate the angular displacement: dw = axis * angle
   3. differentiate to get the  velocity_error = dw / dt
 
+- Pose (SE(4)) differntaition -> Twist (se(4))
+- Linear is normal differentaition over time
+- Angular: 1. err_quat = cur_quat * last_quat_conjugate 2. axis = xyz(err_quat) 3. norm = ||axis||_2, axis = axis/norm 4. speed = 2 * atan2(norm, w(err_quat)) 5. speed = speed /.dt 6. angular_vel = speed * axis
+```python
+  def convert_ori_to_vel(last_ori, cur_ori, dt):
+    err_quat = cur_ori * quat_conjugate(last_ori)
+    
+    axis = err_quat.xyz()
+    norm = axis.norm()
+    if norm < 1e-15:
+      axis = [1,0,0]
+    else:
+      axis = 1/norm * axis
+    
+    speed = 2 * atan2(norm, err_quat.w())
+    if speed > pi:
+      speed -= 2*pi
+    speed /= dt
+
+    angular_vel = speed * axis
+    
+```
+
 ### Homogenous tranformation:
 - $T^{-1} = [R^T, -R^Tb; 0, 1]$
 - To rotate a point in b to s frame by $p_s = T_{sb}p_b$
