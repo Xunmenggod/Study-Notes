@@ -61,4 +61,89 @@ It could help with different launch effect based on different situation, eg.
 ## Export Ros Plugin Lib
 
 
+## ROS2 migration
+- basic commands: ros2 topic ; ros2 launch ; rqt_grapah; ros2 run ; ros2 interface show <msg type> (check the data structure of the ros msg); ros2 action {list/info/send_goal} ;
+- Construction of ros2 package
+    1. Create a ros2 workspace with the src folder
+    2. Create a ros package: ros2 pkg create --build-type ament_cmake --license Apache-2.0 <package_name> --dependencies <ros2 dependencies>
+    3. Build the package: colcon build; To build the selected package: colcon build --packages-select <my_package>
+- Ros2 package development
+    - main header file: "rclcpp/rclcpp.hpp"
+    - ros2 init and create the node:  
+    ```C++
+        // callback
+        void message_callback(const std_msgs::msg::String::SharedPtr msg)
+        {
+            RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Received message: '%s'", msg->data.c_str());
+        }
 
+        rclcpp::init(argc, argv);
+        std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("simple_publisher");
+
+        // publisher
+        rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pub = node->create_publisher<std_msgs::msg::String>("topic_name", 10);
+        // subscriber
+        rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub = node->create_subscription<std_msgs::msg::String>(
+        "topic_name", 10, message_callback);
+
+        
+        // spin and shutdown
+        rclcpp::spin(node);
+        rclcpp::shutdown();
+    ```
+    - Modification on the cmake list and the package.xml: In package.xml, add the dependencies including self ros2 package: 
+    ```xml
+        <depend>rclcpp</depend> 
+        <depend>std_msgs</depend> 
+    ```
+    In CmakeLists:
+    ```xml
+        find_package(rclcpp REQUIRED)
+        find_package(std_msgs REQUIRED)
+
+        add_executable(<executable file name> src/<cpp source file>)
+        ament_target_dependencies(<executable file name> <dependencies>)
+
+        install(TARGETS
+            <executable file name>
+            DESTINATION lib/${PROJECT_NAME})
+    ```
+    - custom msgs and services
+    ```C++
+        // service function for server
+        void add(const std::shared_ptr<example_interfaces::srv::AddTwoInts::Request> request,
+          std::shared_ptr<example_interfaces::srv::AddTwoInts::Response> response)
+        {
+            response->sum = request->a + request->b;
+            RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming request\na: %ld" " b: %ld",
+                            request->a, request->b);
+            RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "sending back response: [%ld]", (long int)response->sum);
+
+            // service server object
+             rclcpp::Service<example_interfaces::srv::AddTwoInts>::SharedPtr service =
+                node->create_service<example_interfaces::srv::AddTwoInts>("add_two_ints", &add);
+
+            // service client object
+            rclcpp::Client<example_interfaces::srv::AddTwoInts>::SharedPtr client =
+                node->create_client<example_interfaces::srv::AddTwoInts>("add_two_ints");
+
+            // calling service from client
+            auto request = std::make_shared<example_interfaces::srv::AddTwoInts::Request>();
+            request->a = atoll(argv[1]);
+            request->b = atoll(argv[2]);
+            // 异步发送请求
+            auto result = client->async_send_request(request);
+            // Wait for the result.
+            if (rclcpp::spin_until_future_complete(node, result) ==
+                rclcpp::FutureReturnCode::SUCCESS)
+            {
+                RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Sum: %ld", result.get()->sum);
+            } else {
+                RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Failed to call service add_two_ints");
+            }
+        }
+    ```
+    
+- Multi-PC communication
+    - Ros2 use distributed network communication dds instead of master/slave, 只要两台电脑在同一个局域网就可以通过ros2互通
+    - 但是有时候局域网多个电脑运行不同的ros2的包你可以通过ROS_DOMAIN_ID决定哪些电脑需要互联, eg. export ROS_DOMAIN_ID=5, domain id最好设置为1-232
