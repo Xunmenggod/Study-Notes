@@ -190,6 +190,21 @@ double getErrorNorm(const Eigen::Matrix<double, 12, 1>& x, const Eigen::Matrix<d
 
 int main()
 {
+    // run the main function
+    Eigen::MatrixXd mat(3, 3);
+    mat << 1, 2, 3, 
+        4, 5, 6, 
+        7, 8, 9;
+
+    // Eigen::VectorXd vec = mat.col(2);
+    Eigen::VectorXd vec = mat.block(0, 1, 3, 1);
+    std::cout << "Column 1 of the matrix:\n" << vec << std::endl;
+
+    return 0;
+}
+
+int main1()
+{
     // set the preview window
     int mpcWindow = 20;
 
