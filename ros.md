@@ -147,3 +147,5 @@ It could help with different launch effect based on different situation, eg.
 - Multi-PC communication
     - Ros2 use distributed network communication dds instead of master/slave, 只要两台电脑在同一个局域网就可以通过ros2互通
     - 但是有时候局域网多个电脑运行不同的ros2的包你可以通过ROS_DOMAIN_ID决定哪些电脑需要互联, eg. export ROS_DOMAIN_ID=5, domain id最好设置为1-232
+
+## launch 

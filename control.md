@@ -45,6 +45,7 @@
 - Given a velocity jacobian in a specified frame A, how could we transfer the jacobian in a different frame B
   If those two frames have same orientation, then the jacobian in different frame is same, otherwise the jacobian in frame B will equal to
   BlkDiag(rot_mtx_B2A, rot_mtx_B2A) * jacobian in A
+- **Notice**: The angular velocity in different frames but the frames have same orientation will have same value
 
 ### hybrid force-position controller
 - Robotic tasks division: in contact environment(constrained direction) or in free space

@@ -362,6 +362,16 @@ git commit -m "add submodule xxx"
 - `git checkout -b <branch name>` create and switch to the branch
 - `git push -u origin <branch name>` push the local branch to the remote and build connection
 
+### Branch merge and rebase
+1. checkout to your own local branch
+2. git pull to get all remote branches
+3. checkout to main branch
+4. merge dev to branch by `git merge dev`
+5. check whether there is any conflict and solve it
+6. use `git status` to check whether the merge is successful
+7. add and commit to indicate the merge operation
+8. git push to update the remote repo
+
 ### Sync between remote and local
 1. add and commit the local changes to the local repo
 2. git push to the remoet repo
