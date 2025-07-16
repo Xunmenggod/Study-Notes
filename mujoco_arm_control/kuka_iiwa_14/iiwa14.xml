@@ -164,7 +164,7 @@
     <motor name="joint7" joint="joint7" ctrlrange="-40 40"/>
   </actuator>
 
-  <keyframe>
+  <!-- <keyframe>
     <key name="home" qpos="0 0 0 -1.5708 0 1.5708 0"/>
-  </keyframe>
+  </keyframe> -->
 </mujoco>
