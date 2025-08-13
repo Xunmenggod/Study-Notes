@@ -7,7 +7,8 @@
   2. calculate the angular displacement: dw = axis * angle
   3. differentiate to get the  velocity_error = dw / dt
 
-- Pose (SE(4)) differntaition -> Twist (se(4))
+- Pose (SE(3)) differntaition -> Twist (se(3))
+- To get the ==error between two SE(3)==: $err = log(T_{des}^{-1}T_{cur})$
 - Linear is normal differentaition over time
 - Angular: 1. err_quat = cur_quat * last_quat_conjugate 2. axis = xyz(err_quat) 3. norm = ||axis||_2, axis = axis/norm 4. speed = 2 * atan2(norm, w(err_quat)) 5. speed = speed /.dt 6. angular_vel = speed * axis
 ```python
