@@ -328,6 +328,17 @@ FROM ros:noetic #<base-images>
 COPY src_scripts.py des_scripts.py # COPY <src file path relative to the location of Dockerfile> <dest file>
 CMD python ./scripts.py
 ```
+### Docker basic commands
+- docker images: show all images
+- docker ps: show all containders
+- docker rmi <image_id/name>: delete docker images
+- docker save <docker_image_name>:<tag> -o <output_name>.tar: save docker images to a tar file
+- docker load -i <docker_image_tar_file>: load tar file to docker image
+- docker commit <container_id> <image_name>:<tag>: commit current containere to a new version docker image
+- docker compose up <compose_file>.yml: up a compose service
+- docker compose down <compose_file>.yml: down a compose service
+### Docker file basic usage
+- 
 
 ### Frequent used docker command
 ```bash
@@ -400,3 +411,36 @@ set terminal png # or other formats
 set output '<file name>.png'
 ```
 - write a gnuplot script with .gp and run it by `gnuplot <file name>.gp`
+
+## Vscode debug related
+- Python debug with other launching style
+  - use debugpy method by `pip install debugpy` or `uv pip install debugpy`
+  - configure the launch.json: 
+    ``` bash
+        {
+            // Use IntelliSense to learn about possible attributes.
+            // Hover to view descriptions of existing attributes.
+            // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+            "version": "0.2.0",
+            "configurations": [
+                {
+                    "name": "Python Debugger: Remote Attach",
+                    "type": "debugpy",
+                    "request": "attach",
+                    "connect": {
+                        "host": "localhost" # the host ip,
+                        "port": 5678 # the port you are listening
+                    },
+                    "pathMappings": [
+                        {
+                            "localRoot": "${workspaceFolder}",
+                            "remoteRoot": "."
+                        }
+                    ]
+                }
+            ]
+        }
+    ```
+    - run your script by `python -m debubgpy --listen <host_ip>:<port> --wait-for-client <file_names> [args]`
+    - Enable the debugger by using the vscode python debug and select the remote attach for debugging
+  
